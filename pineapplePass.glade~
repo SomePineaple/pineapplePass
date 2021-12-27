@@ -24,7 +24,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogNew">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -33,8 +33,26 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogOpen">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-open</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="use-stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem">
+                        <property name="label">gtk-save</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="use-stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem">
+                        <property name="label">gtk-save-as</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="use-underline">True</property>
@@ -48,7 +66,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogQuit">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -71,7 +89,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogCut">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-cut</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -80,7 +98,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogCopy">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-copy</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -89,7 +107,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogPaste">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-paste</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -98,7 +116,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="OpenDialogDelete">
+                      <object class="GtkImageMenuItem">
                         <property name="label">gtk-delete</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>

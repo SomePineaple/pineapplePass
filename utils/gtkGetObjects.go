@@ -5,6 +5,22 @@ import (
 	"log"
 )
 
+func GetMenuItem(builder *gtk.Builder, objID string) *gtk.MenuItem {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetImageMenuItem): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	menuItem, ok := obj.(*gtk.MenuItem)
+	if !ok {
+		log.Println("(GetImageMenuItem): Object with id", objID, "is not of type *gtk.MenuItem")
+		return nil
+	}
+
+	return menuItem
+}
+
 func GetLabel(builder *gtk.Builder, objID string) *gtk.Label {
 	obj, err := builder.GetObject(objID)
 	if err != nil {
@@ -51,36 +67,4 @@ func GetDialog(builder *gtk.Builder, objID string) *gtk.Dialog {
 	}
 
 	return dialog
-}
-
-func ConnectButton(builder *gtk.Builder, objID string, detailedSignal string, f interface{}) {
-	obj, err := builder.GetObject(objID)
-	if err != nil {
-		log.Println("(connectButton): Failed to get object", objID, "err:", err)
-		return
-	}
-
-	proper, ok := obj.(*gtk.Button)
-	if !ok {
-		log.Println("(ConnectButton):", objID, "is not a gtk button.")
-		return
-	}
-
-	proper.Connect(detailedSignal, f)
-}
-
-func ConnectCheckButton(builder *gtk.Builder, objID string, detailedSignal string, f interface{}) {
-	obj, err := builder.GetObject(objID)
-	if err != nil {
-		log.Println("(connectButton): Failed to get object", objID, "err:", err)
-		return
-	}
-
-	proper, ok := obj.(*gtk.CheckButton)
-	if !ok {
-		log.Println("(connectButton): Failed to set object type", objID)
-		return
-	}
-
-	proper.Connect(detailedSignal, f)
 }
