@@ -82,9 +82,8 @@ func showPasswordConfirmDialogue(builder *gtk.Builder) {
 			failedLabel := utils.GetLabel(builder, "PwFailedLabel")
 			failedLabel.SetText("Passwords do not match")
 		} else {
-			mgr := manager.New()
-
-			mgr.CreateDatabase("./defaultSafe.ppass", confirmText)
+			manager.Current = manager.New()
+			manager.Current.CreateDatabase("./defaultSafe.ppass", confirmText)
 		}
 	})
 

@@ -21,6 +21,38 @@ func GetMenuItem(builder *gtk.Builder, objID string) *gtk.MenuItem {
 	return menuItem
 }
 
+func GetCheckButton(builder *gtk.Builder, objID string) *gtk.CheckButton {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetCheckButton): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	checkButton, ok := obj.(*gtk.CheckButton)
+	if !ok {
+		log.Println("(GetCheckButton): Object with id", objID, "is not of type *gtk.CheckButton")
+		return nil
+	}
+
+	return checkButton
+}
+
+func GetButton(builder *gtk.Builder, objID string) *gtk.Button {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetButton): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	button, ok := obj.(*gtk.Button)
+	if !ok {
+		log.Println("(GetButton): Object with id", objID, "is not of type *gtk.Button")
+		return nil
+	}
+
+	return button
+}
+
 func GetLabel(builder *gtk.Builder, objID string) *gtk.Label {
 	obj, err := builder.GetObject(objID)
 	if err != nil {
