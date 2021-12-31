@@ -79,7 +79,7 @@ func showPasswordConfirmDialogue() {
 			failedLabel := utils.GetLabel(builder, "PwFailedLabel")
 			failedLabel.SetText("Passwords do not match")
 		} else {
-			manager.Current = manager.New()
+			manager.Current = manager.NewDatabase()
 			manager.Current.CreateDatabase("./defaultSafe.ppass", confirmText)
 
 			showMainWindow()

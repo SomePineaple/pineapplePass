@@ -1,10 +1,10 @@
 package manager
 
 type Database struct {
-	databasePath       string
+	DatabasePath       string
 	masterPassword     string
 	masterPasswordSalt []byte
-	masterFolder       MasterFolder
+	MasterFolder       MasterFolder
 }
 
 type DatabaseFile struct {
@@ -13,17 +13,26 @@ type DatabaseFile struct {
 }
 
 type MasterFolder struct {
-	containedFolders   []Folder
-	containedPasswords []Password
+	ContainedFolders   []Folder
+	ContainedPasswords []Password
 }
 
 type Folder struct {
-	containedPasswords []Password
+	Name               string
+	ContainedPasswords []Password
 }
 
 type Password struct {
-	name     string
-	email    string
-	password string
-	notes    string
+	Name     string
+	Email    string
+	Password string
+	Notes    string
+}
+
+func NewDatabase() Database {
+	return Database{}
+}
+
+func NewFolder(name string) Folder {
+	return Folder{Name: name, ContainedPasswords: []Password{}}
 }

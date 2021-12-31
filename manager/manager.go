@@ -9,24 +9,20 @@ import (
 
 var Current Database
 
-func New() Database {
-	return Database{}
-}
-
 func (d Database) OpenDatabase(databasePath string, masterPassword string) {
-	d.databasePath = databasePath
+	d.DatabasePath = databasePath
 	d.masterPassword = masterPassword
 }
 
 func (d Database) CreateDatabase(databasePath string, masterPassword string) {
 	d.masterPassword = masterPassword
-	d.databasePath = databasePath
+	d.DatabasePath = databasePath
 	d.masterPasswordSalt = utils.GeneratePasswordSalt()
 }
 
 func (d Database) SaveDatabase() {
 	aesKey := utils.GenerateAesKey(d.masterPassword, d.masterPasswordSalt)
-	bytesToEncrypt, err := json.Marshal(d.masterFolder)
+	bytesToEncrypt, err := json.Marshal(d.MasterFolder)
 	if err != nil {
 		log.Fatalln("(SaveDatabase): Failed to marshal master folder:", err)
 	}
@@ -39,8 +35,4 @@ func (d Database) SaveDatabase() {
 	}
 
 	log.Println(json.Marshal(dbFile))
-}
-
-func (d Database) GetDatabasePath() string {
-	return d.databasePath
 }
