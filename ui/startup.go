@@ -11,6 +11,7 @@ import (
 
 var builder *gtk.Builder
 var loginWindow *gtk.Window
+var pwConfirmDialog *gtk.Dialog
 
 func OnActivate(application *gtk.Application) {
 	var err error
@@ -53,7 +54,7 @@ func OnActivate(application *gtk.Application) {
 }
 
 func showPasswordConfirmDialogue() {
-	pwConfirmDialog := utils.GetDialog(builder, "PasswordConfirmDialogue")
+	pwConfirmDialog = utils.GetDialog(builder, "PasswordConfirmDialogue")
 	pwConfirmDialog.SetTitle("Please Confirm Your Password")
 
 	utils.ConnectButton(builder, "PasswordConfirmCancel", "clicked", func() {
