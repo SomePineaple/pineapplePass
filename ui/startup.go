@@ -44,6 +44,16 @@ func OnActivate(application *gtk.Application) {
 	utils.ConnectButton(builder, "LoginButton", "pressed", func() {
 		if _, err := os.Stat("./defaultSafe.ppass"); errors.Is(err, os.ErrNotExist) {
 			showPasswordConfirmDialogue()
+		} else {
+			passwordEntry := utils.GetEntry(builder, "PasswordEntry")
+
+			password, err := passwordEntry.GetText()
+			if err != nil {
+				log.Println("Failed to get text from original PW entry:", err)
+			}
+
+			manager.Current = manager.NewDatabase()
+			manager.OpenDatabase("./defaultSafe.ppass", password)
 		}
 	})
 

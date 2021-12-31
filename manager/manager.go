@@ -3,6 +3,7 @@ package manager
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"pineapplePass/utils"
@@ -10,9 +11,10 @@ import (
 
 var Current Database
 
-func (d Database) OpenDatabase(databasePath string, masterPassword string) {
-	d.DatabasePath = databasePath
-	d.masterPassword = masterPassword
+func OpenDatabase(databasePath string, masterPassword string) {
+	// TODO: Open databases properly
+	Current.DatabasePath = databasePath
+	Current.masterPassword = masterPassword
 }
 
 func CreateDatabase(databasePath string, masterPassword string) {
@@ -37,13 +39,32 @@ func (d Database) SaveDatabase() {
 	}
 
 	dbFileBytes, err := json.Marshal(dbFile)
-
-	_, err = os.Stdout.Write(dbFileBytes)
 	if err != nil {
-		return
+		log.Fatalln("Failed to marshal dbFile, err:", err)
 	}
 
-	log.Println()
+	var outputFile *os.File
+	if _, err := os.Stat(d.DatabasePath); errors.Is(err, os.ErrNotExist) {
+		outputFile, err = os.Create(d.DatabasePath)
+		if err != nil {
+			log.Fatalln("Failed to create output file:", err)
+		}
+	} else {
+		outputFile, err = os.OpenFile(d.DatabasePath, os.O_RDWR, os.ModePerm)
+		if err != nil {
+			log.Fatalln("Failed to open output file:", err)
+		}
+	}
+
+	_, err = outputFile.Write(dbFileBytes)
+	if err != nil {
+		log.Fatalln("Failed to write database to file:", err)
+	}
+
+	err = outputFile.Close()
+	if err != nil {
+		log.Fatalln("Failed to close database file:", err)
+	}
 }
 
 func (d Database) AddFolder(folderName string) {
