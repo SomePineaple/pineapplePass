@@ -5,20 +5,36 @@ import (
 	"log"
 )
 
-func GetMenuItem(builder *gtk.Builder, objID string) *gtk.MenuItem {
+func GetListBox(builder *gtk.Builder, objID string) *gtk.ListBox {
 	obj, err := builder.GetObject(objID)
 	if err != nil {
-		log.Println("(GetImageMenuItem): Failed to get object with id", objID, "err:", err)
+		log.Println("(GetListBox): Failed to get object with id", objID, "err:", err)
 		return nil
 	}
 
-	menuItem, ok := obj.(*gtk.MenuItem)
+	listBox, ok := obj.(*gtk.ListBox)
 	if !ok {
-		log.Println("(GetImageMenuItem): Object with id", objID, "is not of type *gtk.MenuItem")
+		log.Println("(GetListBox): Object with id", objID, "is not of type *gtk.ListBox")
 		return nil
 	}
 
-	return menuItem
+	return listBox
+}
+
+func GetWindow(builder *gtk.Builder, objID string) *gtk.Window {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetWindow): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	window, ok := obj.(*gtk.Window)
+	if !ok {
+		log.Println("(GetWindow): Object with id", objID, "is not of type *gtk.Window")
+		return nil
+	}
+
+	return window
 }
 
 func GetCheckButton(builder *gtk.Builder, objID string) *gtk.CheckButton {

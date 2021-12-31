@@ -1,13 +1,12 @@
 package main
 
 import (
-	"log"
-	"os"
-	"pineapplePass/ui"
-	"pineapplePass/utils"
-
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"log"
+	"os"
+	"pineapplePass/manager"
+	"pineapplePass/ui"
 )
 
 func main() {
@@ -21,5 +20,7 @@ func main() {
 	// Sets the function to run when the application starts
 	application.Connect("activate", func() { ui.OnActivate(application) })
 	// Run Gtk application
-	utils.ExitProgram(application.Run(os.Args))
+	exitCode := application.Run(os.Args)
+	manager.Current.SaveDatabase()
+	os.Exit(exitCode)
 }

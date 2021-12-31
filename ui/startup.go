@@ -9,8 +9,12 @@ import (
 	"pineapplePass/utils"
 )
 
+var builder *gtk.Builder
+var loginWindow *gtk.Window
+
 func OnActivate(application *gtk.Application) {
-	builder, err := gtk.BuilderNew()
+	var err error
+	builder, err = gtk.BuilderNew()
 	if err != nil {
 		log.Fatal("Failed to create a new builder object:", err)
 	}
@@ -32,31 +36,23 @@ func OnActivate(application *gtk.Application) {
 		}
 	})
 
-	obj, err := builder.GetObject("LoginWindow")
-	if err != nil {
-		log.Fatal("Failed to load get window from builder:", err)
-	}
+	loginWindow = utils.GetWindow(builder, "LoginWindow")
 
-	window, ok := obj.(*gtk.Window)
-	if !ok {
-		log.Fatal("Failed to grab window from glade file")
-	}
-
-	application.AddWindow(window)
+	application.AddWindow(loginWindow)
 
 	utils.ConnectButton(builder, "LoginButton", "pressed", func() {
 		if _, err := os.Stat("./defaultSafe.ppass"); errors.Is(err, os.ErrNotExist) {
-			showPasswordConfirmDialogue(builder)
+			showPasswordConfirmDialogue()
 		}
 	})
 
-	window.SetTitle("Pineapple Pass")
-	window.SetDefaultSize(800, 300)
-	window.ShowAll()
-	window.Show()
+	loginWindow.SetTitle("Pineapple Pass")
+	loginWindow.SetDefaultSize(800, 300)
+	loginWindow.ShowAll()
+	loginWindow.Show()
 }
 
-func showPasswordConfirmDialogue(builder *gtk.Builder) {
+func showPasswordConfirmDialogue() {
 	pwConfirmDialog := utils.GetDialog(builder, "PasswordConfirmDialogue")
 	pwConfirmDialog.SetTitle("Please Confirm Your Password")
 
@@ -84,6 +80,8 @@ func showPasswordConfirmDialogue(builder *gtk.Builder) {
 		} else {
 			manager.Current = manager.New()
 			manager.Current.CreateDatabase("./defaultSafe.ppass", confirmText)
+
+			showMainWindow()
 		}
 	})
 

@@ -1,28 +1,46 @@
 package manager
 
-import "log"
+import (
+	"encoding/base64"
+	"encoding/json"
+	"log"
+	"pineapplePass/utils"
+)
 
-var Current Manager
+var Current Database
 
-func New() Manager {
-	return Manager{}
+func New() Database {
+	return Database{}
 }
 
-func (m Manager) OpenDatabase(databasePath string, masterPassword string) {
-	m.databasePath = databasePath
-	m.masterPassword = masterPassword
+func (d Database) OpenDatabase(databasePath string, masterPassword string) {
+	d.databasePath = databasePath
+	d.masterPassword = masterPassword
 }
 
-func (m Manager) CreateDatabase(databasePath string, masterPassword string) {
-	m.masterPassword = masterPassword
-	m.databasePath = databasePath
-	log.Println("Creating database at:", databasePath, "with password:", masterPassword)
+func (d Database) CreateDatabase(databasePath string, masterPassword string) {
+	d.masterPassword = masterPassword
+	d.databasePath = databasePath
+	d.masterPasswordSalt = utils.GeneratePasswordSalt()
 }
 
-func (m Manager) SaveDatabase() {
+func (d Database) SaveDatabase() {
+	aesKey := utils.GenerateAesKey(d.masterPassword, d.masterPasswordSalt)
+	bytesToEncrypt, err := json.Marshal(d.masterFolder)
+	if err != nil {
+		log.Fatalln("(SaveDatabase): Failed to marshal master folder:", err)
+	}
 
+	encryptedBytes := utils.AesEncryptBytes(bytesToEncrypt, aesKey)
+
+	dbFile := DatabaseFile{
+		masterPasswordSalt:    base64.StdEncoding.EncodeToString(d.masterPasswordSalt),
+		encryptedMasterFolder: base64.StdEncoding.EncodeToString(encryptedBytes),
+	}
+
+	log.Println(json.Marshal(dbFile))
 }
 
-func (m Manager) GetDatabasePath() string {
-	return m.databasePath
+func (d Database) GetDatabasePath() string {
+	return d.databasePath
 }

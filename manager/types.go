@@ -1,10 +1,20 @@
 package manager
 
-type Manager struct {
-	databasePath   string
-	masterPassword string
-	folders        []Folder
-	passwords      []Password
+type Database struct {
+	databasePath       string
+	masterPassword     string
+	masterPasswordSalt []byte
+	masterFolder       MasterFolder
+}
+
+type DatabaseFile struct {
+	masterPasswordSalt    string
+	encryptedMasterFolder string
+}
+
+type MasterFolder struct {
+	containedFolders   []Folder
+	containedPasswords []Password
 }
 
 type Folder struct {
