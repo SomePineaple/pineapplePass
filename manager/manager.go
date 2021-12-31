@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"log"
+	"os"
 	"pineapplePass/utils"
 )
 
@@ -14,10 +15,11 @@ func (d Database) OpenDatabase(databasePath string, masterPassword string) {
 	d.masterPassword = masterPassword
 }
 
-func (d Database) CreateDatabase(databasePath string, masterPassword string) {
-	d.masterPassword = masterPassword
-	d.DatabasePath = databasePath
-	d.masterPasswordSalt = utils.GeneratePasswordSalt()
+func CreateDatabase(databasePath string, masterPassword string) {
+	Current.masterPassword = masterPassword
+	Current.DatabasePath = databasePath
+	Current.masterPasswordSalt = append(utils.GeneratePasswordSalt())
+	log.Println("Master Password Salt:", Current.masterPasswordSalt)
 }
 
 func (d Database) SaveDatabase() {
@@ -30,9 +32,20 @@ func (d Database) SaveDatabase() {
 	encryptedBytes := utils.AesEncryptBytes(bytesToEncrypt, aesKey)
 
 	dbFile := DatabaseFile{
-		masterPasswordSalt:    base64.StdEncoding.EncodeToString(d.masterPasswordSalt),
-		encryptedMasterFolder: base64.StdEncoding.EncodeToString(encryptedBytes),
+		MasterPasswordSalt:    base64.StdEncoding.EncodeToString(d.masterPasswordSalt),
+		EncryptedMasterFolder: base64.StdEncoding.EncodeToString(encryptedBytes),
 	}
 
-	log.Println(json.Marshal(dbFile))
+	dbFileBytes, err := json.Marshal(dbFile)
+
+	_, err = os.Stdout.Write(dbFileBytes)
+	if err != nil {
+		return
+	}
+
+	log.Println()
+}
+
+func (d Database) AddFolder(folderName string) {
+	Current.MasterFolder.ContainedFolders = append(Current.MasterFolder.ContainedFolders, NewFolder(folderName))
 }

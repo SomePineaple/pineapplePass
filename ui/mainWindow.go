@@ -51,8 +51,10 @@ func setupMainWindowButtons() {
 			log.Fatalln("Failed to get name for folder from NewFolderNameEntry entryBox, err:", err)
 		}
 
-		manager.Current.MasterFolder.ContainedFolders = append(manager.Current.MasterFolder.ContainedFolders, manager.NewFolder(newFolderName))
+		manager.Current.AddFolder(newFolderName)
 		updateFolders()
+
+		manager.Current.SaveDatabase()
 	})
 }
 

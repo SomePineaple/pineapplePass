@@ -8,8 +8,8 @@ type Database struct {
 }
 
 type DatabaseFile struct {
-	masterPasswordSalt    string
-	encryptedMasterFolder string
+	MasterPasswordSalt    string
+	EncryptedMasterFolder string
 }
 
 type MasterFolder struct {

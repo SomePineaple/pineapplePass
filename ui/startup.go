@@ -48,7 +48,7 @@ func OnActivate(application *gtk.Application) {
 	})
 
 	loginWindow.SetTitle("Pineapple Pass")
-	loginWindow.SetDefaultSize(800, 300)
+	loginWindow.SetDefaultSize(400, 300)
 	loginWindow.ShowAll()
 	loginWindow.Show()
 }
@@ -80,7 +80,7 @@ func showPasswordConfirmDialogue() {
 			failedLabel.SetText("Passwords do not match")
 		} else {
 			manager.Current = manager.NewDatabase()
-			manager.Current.CreateDatabase("./defaultSafe.ppass", confirmText)
+			manager.CreateDatabase("./defaultSafe.ppass", confirmText)
 
 			showMainWindow()
 		}
