@@ -5,6 +5,7 @@ type Database struct {
 	masterPassword     string
 	masterPasswordSalt []byte
 	MasterFolder       MasterFolder
+	CurrentFolder      int
 }
 
 type DatabaseFile struct {
@@ -30,7 +31,7 @@ type Password struct {
 }
 
 func NewDatabase() Database {
-	return Database{}
+	return Database{CurrentFolder: -1}
 }
 
 func NewFolder(name string) Folder {

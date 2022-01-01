@@ -14,9 +14,16 @@ func showMainWindow() {
 
 	window := utils.GetWindow(builder, "MainWindow")
 
-	// TODO: Sort list box alphabetically
 	foldersListBox := utils.GetListBox(builder, "FoldersListBox")
 	foldersListBox.SetActivateOnSingleClick(true)
+	foldersListBox.Connect("row-selected", func() {
+
+	})
+	mainFolder, err := gtk.LabelNew("MasterFolder")
+	if err != nil {
+		log.Fatalln("Failed to create label for main folder, err:", err)
+	}
+	foldersListBox.Prepend(mainFolder)
 
 	setupMainWindowButtons()
 
@@ -35,6 +42,7 @@ func setupMainWindowButtons() {
 	utils.ConnectButton(builder, "NewFolderButton", "clicked", func() {
 		newFolderDialog := utils.GetDialog(builder, "NewFolderDialog")
 		utils.GetEntry(builder, "NewFolderNameEntry").SetText("")
+		newFolderDialog.SetTitle("Create New Folder")
 		newFolderDialog.ShowAll()
 		newFolderDialog.Show()
 	})
@@ -56,6 +64,40 @@ func setupMainWindowButtons() {
 
 		manager.Current.SaveDatabase()
 	})
+
+	utils.ConnectButton(builder, "NewPasswordButton", "clicked", func() {
+		newPasswordDialog := utils.GetDialog(builder, "NewPasswordDialog")
+		for _, entry := range []string{"NewPasswordNameEntry", "NewPasswordEmailEntry", "NewPasswordPasswordEntry", "NewPasswordNotesEntry"} {
+			utils.GetEntry(builder, entry).SetText("")
+		}
+
+		newPasswordDialog.SetTitle("Create New Password")
+		newPasswordDialog.ShowAll()
+		newPasswordDialog.Show()
+	})
+
+	utils.ConnectButton(builder, "NewPasswordCancel", "clicked", func() {
+		utils.GetDialog(builder, "NewPasswordDialog").Hide()
+	})
+
+	utils.ConnectButton(builder, "NewPasswordOK", "clicked", func() {
+		name, _ := utils.GetEntry(builder, "NewPasswordNameEntry").GetText()
+		email, _ := utils.GetEntry(builder, "NewPasswordEmailEntry").GetText()
+		password, _ := utils.GetEntry(builder, "NewPasswordPasswordEntry").GetText()
+		notes, _ := utils.GetEntry(builder, "NewPasswordNotesEntry").GetText()
+
+		newPassword := manager.Password{
+			Name:     name,
+			Email:    email,
+			Password: password,
+			Notes:    notes,
+		}
+
+		manager.Current.AddPassword(newPassword)
+		updatePasswords()
+
+		utils.GetDialog(builder, "NewPasswordDialog").Hide()
+	})
 }
 
 func updateFolders() {
@@ -64,19 +106,44 @@ func updateFolders() {
 		foldersListBox.Remove(item.(*gtk.Widget))
 	})
 
-	for i := 0; i < len(manager.Current.MasterFolder.ContainedFolders); i++ {
-		label, err := gtk.LabelNew(manager.Current.MasterFolder.ContainedFolders[i].Name)
+	for i, folder := range manager.Current.MasterFolder.ContainedFolders {
+		label, err := gtk.LabelNew(folder.Name)
 		if err == nil {
-			foldersListBox.Prepend(label)
+			foldersListBox.Insert(label, i)
 		} else {
-			log.Fatalln("Failed to create label for folder, name:", manager.Current.MasterFolder.ContainedFolders[i].Name, "err:", err)
+			log.Fatalln("Failed to create label for folder, name:", folder.Name, "err:", err)
 		}
 	}
+
+	mainFolder, err := gtk.LabelNew("MasterFolder")
+	if err != nil {
+		log.Fatalln("Failed to create label for main folder, err:", err)
+	}
+	foldersListBox.Prepend(mainFolder)
 
 	foldersListBox.ShowAll()
 }
 
 func updatePasswords() {
 	passwordsListBox := utils.GetListBox(builder, "PasswordsListBox")
-	passwordsListBox.GetChildren().Free()
+	passwordsListBox.GetChildren().Foreach(func(item interface{}) {
+		passwordsListBox.Remove(item.(*gtk.Widget))
+	})
+
+	var allPasswords []manager.Password
+
+	if manager.Current.CurrentFolder == -1 {
+		allPasswords = manager.Current.MasterFolder.ContainedPasswords
+	} else {
+		allPasswords = manager.Current.MasterFolder.ContainedFolders[manager.Current.CurrentFolder].ContainedPasswords
+	}
+
+	for i, password := range allPasswords {
+		label, err := gtk.LabelNew(password.Name)
+		if err == nil {
+			passwordsListBox.Insert(label, i)
+		}
+	}
+
+	passwordsListBox.ShowAll()
 }

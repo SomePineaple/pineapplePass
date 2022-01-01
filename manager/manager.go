@@ -21,7 +21,6 @@ func CreateDatabase(databasePath string, masterPassword string) {
 	Current.masterPassword = masterPassword
 	Current.DatabasePath = databasePath
 	Current.masterPasswordSalt = append(utils.GeneratePasswordSalt())
-	log.Println("Master Password Salt:", Current.masterPasswordSalt)
 }
 
 func (d Database) SaveDatabase() {
@@ -44,7 +43,7 @@ func (d Database) SaveDatabase() {
 	}
 
 	var outputFile *os.File
-	if _, err := os.Stat(d.DatabasePath); errors.Is(err, os.ErrNotExist) {
+	if _, err = os.Stat(d.DatabasePath); errors.Is(err, os.ErrNotExist) {
 		outputFile, err = os.Create(d.DatabasePath)
 		if err != nil {
 			log.Fatalln("Failed to create output file:", err)
@@ -69,4 +68,12 @@ func (d Database) SaveDatabase() {
 
 func (d Database) AddFolder(folderName string) {
 	Current.MasterFolder.ContainedFolders = append(Current.MasterFolder.ContainedFolders, NewFolder(folderName))
+}
+
+func (d Database) AddPassword(password Password) {
+	if Current.CurrentFolder == -1 {
+		Current.MasterFolder.ContainedPasswords = append(Current.MasterFolder.ContainedPasswords, password)
+	} else {
+		Current.MasterFolder.ContainedFolders[Current.CurrentFolder].ContainedPasswords = append(Current.MasterFolder.ContainedFolders[Current.CurrentFolder].ContainedPasswords, password)
+	}
 }
