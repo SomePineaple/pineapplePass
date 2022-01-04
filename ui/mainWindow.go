@@ -30,7 +30,7 @@ func showMainWindow() {
 	window.SetTitle("Pineapple Pass")
 	window.SetDefaultSize(800, 800)
 	window.Connect("destroy", func() {
-		manager.Current.SaveDatabase()
+		manager.SaveDatabase()
 		os.Exit(0)
 	})
 
@@ -59,10 +59,10 @@ func setupMainWindowButtons() {
 			log.Fatalln("Failed to get name for folder from NewFolderNameEntry entryBox, err:", err)
 		}
 
-		manager.Current.AddFolder(newFolderName)
+		manager.AddFolder(newFolderName)
 		updateFolders()
 
-		manager.Current.SaveDatabase()
+		manager.SaveDatabase()
 	})
 
 	utils.ConnectButton(builder, "NewPasswordButton", "clicked", func() {
@@ -93,7 +93,7 @@ func setupMainWindowButtons() {
 			Notes:    notes,
 		}
 
-		manager.Current.AddPassword(newPassword)
+		manager.AddPassword(newPassword)
 		updatePasswords()
 
 		utils.GetDialog(builder, "NewPasswordDialog").Hide()

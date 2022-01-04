@@ -23,9 +23,13 @@ func CreateDatabase(databasePath string, masterPassword string) {
 	Current.masterPasswordSalt = append(utils.GeneratePasswordSalt())
 }
 
-func (d Database) SaveDatabase() {
-	aesKey := utils.GenerateAesKey(d.masterPassword, d.masterPasswordSalt)
-	bytesToEncrypt, err := json.Marshal(d.MasterFolder)
+func SaveDatabase() {
+	if Current.DatabasePath == "" {
+		return
+	}
+
+	aesKey := utils.GenerateAesKey(Current.masterPassword, Current.masterPasswordSalt)
+	bytesToEncrypt, err := json.Marshal(Current.MasterFolder)
 	if err != nil {
 		log.Fatalln("(SaveDatabase): Failed to marshal master folder:", err)
 	}
@@ -33,7 +37,7 @@ func (d Database) SaveDatabase() {
 	encryptedBytes := utils.AesEncryptBytes(bytesToEncrypt, aesKey)
 
 	dbFile := DatabaseFile{
-		MasterPasswordSalt:    base64.StdEncoding.EncodeToString(d.masterPasswordSalt),
+		MasterPasswordSalt:    base64.StdEncoding.EncodeToString(Current.masterPasswordSalt),
 		EncryptedMasterFolder: base64.StdEncoding.EncodeToString(encryptedBytes),
 	}
 
@@ -43,13 +47,13 @@ func (d Database) SaveDatabase() {
 	}
 
 	var outputFile *os.File
-	if _, err = os.Stat(d.DatabasePath); errors.Is(err, os.ErrNotExist) {
-		outputFile, err = os.Create(d.DatabasePath)
+	if _, err = os.Stat(Current.DatabasePath); errors.Is(err, os.ErrNotExist) {
+		outputFile, err = os.Create(Current.DatabasePath)
 		if err != nil {
 			log.Fatalln("Failed to create output file:", err)
 		}
 	} else {
-		outputFile, err = os.OpenFile(d.DatabasePath, os.O_RDWR, os.ModePerm)
+		outputFile, err = os.OpenFile(Current.DatabasePath, os.O_RDWR, os.ModePerm)
 		if err != nil {
 			log.Fatalln("Failed to open output file:", err)
 		}
@@ -66,11 +70,11 @@ func (d Database) SaveDatabase() {
 	}
 }
 
-func (d Database) AddFolder(folderName string) {
+func AddFolder(folderName string) {
 	Current.MasterFolder.ContainedFolders = append(Current.MasterFolder.ContainedFolders, NewFolder(folderName))
 }
 
-func (d Database) AddPassword(password Password) {
+func AddPassword(password Password) {
 	if Current.CurrentFolder == -1 {
 		Current.MasterFolder.ContainedPasswords = append(Current.MasterFolder.ContainedPasswords, password)
 	} else {
