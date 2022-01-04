@@ -23,7 +23,7 @@ func GenerateAesKey(password string, salt []byte) []byte {
 	return argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
 }
 
-func AesEncryptBytes(plainText []byte, key []byte) []byte {
+func AesEncryptBytes(plaintext []byte, key []byte) []byte {
 	aesCipher, err := aes.NewCipher(key)
 	if err != nil {
 		log.Fatalln("(AesEncryptBytes): Failed to create new AES cipher, err:", err)
@@ -40,10 +40,10 @@ func AesEncryptBytes(plainText []byte, key []byte) []byte {
 		log.Fatalln("(AesEncryptBytes): Failed to put random values in to nonce ???, err:", err)
 	}
 
-	return gcm.Seal(nonce, nonce, plainText, nil)
+	return gcm.Seal(nonce, nonce, plaintext, nil)
 }
 
-func AesDecryptBytes(cipherText []byte, key []byte) []byte {
+func AesDecryptBytes(ciphertext []byte, key []byte) []byte {
 	aesCipher, err := aes.NewCipher(key)
 	if err != nil {
 		log.Fatalln("(AesDecryptBytes): Failed to create new AES cipher, err:", err)
@@ -55,14 +55,14 @@ func AesDecryptBytes(cipherText []byte, key []byte) []byte {
 	}
 
 	nonceSize := gcm.NonceSize()
-	if len(cipherText) < nonceSize {
+	if len(ciphertext) < nonceSize {
 		fmt.Println(err)
 	}
 
-	nonce, cipherText := cipherText[:nonceSize], cipherText[nonceSize:]
-	plaintext, err := gcm.Open(nil, nonce, cipherText, nil)
+	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		log.Fatalln("(AesDecryptBytes): Failed to decrypt cipherText, err:", err)
+		log.Fatalln("(AesDecryptBytes): Failed to decrypt ciphertext, err:", err)
 	}
 
 	return plaintext
