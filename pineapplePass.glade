@@ -210,10 +210,11 @@
           </packing>
         </child>
         <child>
-          <!-- n-columns=2 n-rows=2 -->
+          <!-- n-columns=2 n-rows=5 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="row-spacing">4</property>
             <child>
               <object class="GtkButton" id="NewFolderButton">
                 <property name="label" translatable="yes">New Folder</property>
@@ -272,27 +273,62 @@
                 <property name="top-attach">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkLabel" id="PasswordInformationLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Name:
+Email:
+Password:
+Notes:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+                <property name="height">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="CopyEmailButton">
+                <property name="label" translatable="yes">Copy Email</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="CopyPasswordButton">
+                <property name="label" translatable="yes">Copy Password</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="EditEntryButton">
+                <property name="label" translatable="yes">Edit Entry</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">4</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="MainWindowPasswordDisplay">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Name:
-Email:
-Password:
-Notes:</property>
-            <property name="selectable">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -548,6 +584,7 @@ Notes:</property>
                   <object class="GtkEntry" id="NewPasswordPasswordEntry">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="visibility">False</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -580,6 +617,20 @@ Notes:</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="NewPasswordShowPasswordCheckButton">
+                <property name="label" translatable="yes">Show Password</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
