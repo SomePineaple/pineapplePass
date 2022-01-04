@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
 	"os"
 	"pineapplePass/utils"
@@ -12,9 +13,38 @@ import (
 var Current Database
 
 func OpenDatabase(databasePath string, masterPassword string) {
-	// TODO: Open databases properly
 	Current.DatabasePath = databasePath
 	Current.masterPassword = masterPassword
+
+	fileBytes, err := ioutil.ReadFile(Current.DatabasePath)
+	if err != nil {
+		log.Fatalln("(OpenDatabase): Failed to get bytes from databaseFile, err:", err)
+	}
+
+	var dbFile DatabaseFile
+	err = json.Unmarshal(fileBytes, &dbFile)
+	if err != nil {
+		log.Fatalln("(OpenDatabase): Failed to unmarshal database, database likely corrupted. err:", err, "fileBytes:", fileBytes)
+	}
+
+	Current.masterPasswordSalt, err = base64.StdEncoding.DecodeString(dbFile.MasterPasswordSalt)
+	if err != nil {
+		log.Fatalln("(OpenDatabase): Failed to get masterPasswordSalt from base64 database, database likely corrupted. err:", err)
+	}
+
+	aesKey := utils.GenerateAesKey(Current.masterPassword, Current.masterPasswordSalt)
+
+	encryptedMasterFolder, err := base64.StdEncoding.DecodeString(dbFile.EncryptedMasterFolder)
+	if err != nil {
+		log.Fatalln("(OpenDatabase): Failed to get encryptedMasterFolder from base64 database, database likely corrupted. err:", err)
+	}
+
+	decryptedMasterFolder := utils.AesDecryptBytes(encryptedMasterFolder, aesKey)
+
+	err = json.Unmarshal(decryptedMasterFolder, &Current.MasterFolder)
+	if err != nil {
+		log.Fatalln("(OpenDatabase): Failed to decrypt master folder, likely due to an incorrect password, err:", err)
+	}
 }
 
 func CreateDatabase(databasePath string, masterPassword string) {
@@ -43,30 +73,30 @@ func SaveDatabase() {
 
 	dbFileBytes, err := json.Marshal(dbFile)
 	if err != nil {
-		log.Fatalln("Failed to marshal dbFile, err:", err)
+		log.Fatalln("(SaveDatabase): Failed to marshal dbFile, err:", err)
 	}
 
 	var outputFile *os.File
 	if _, err = os.Stat(Current.DatabasePath); errors.Is(err, os.ErrNotExist) {
 		outputFile, err = os.Create(Current.DatabasePath)
 		if err != nil {
-			log.Fatalln("Failed to create output file:", err)
+			log.Fatalln("(SaveDatabase): Failed to create output file:", err)
 		}
 	} else {
-		outputFile, err = os.OpenFile(Current.DatabasePath, os.O_RDWR, os.ModePerm)
+		outputFile, err = os.OpenFile(Current.DatabasePath, os.O_WRONLY, os.ModePerm)
 		if err != nil {
-			log.Fatalln("Failed to open output file:", err)
+			log.Fatalln("(SaveDatabase): Failed to open output file:", err)
 		}
 	}
 
 	_, err = outputFile.Write(dbFileBytes)
 	if err != nil {
-		log.Fatalln("Failed to write database to file:", err)
+		log.Fatalln("(SaveDatabase): Failed to write database to file:", err)
 	}
 
 	err = outputFile.Close()
 	if err != nil {
-		log.Fatalln("Failed to close database file:", err)
+		log.Fatalln("(SaveDatabase): Failed to close database file:", err)
 	}
 }
 

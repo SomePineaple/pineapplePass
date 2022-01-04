@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"fmt"
 	"golang.org/x/crypto/argon2"
 	"log"
 )
@@ -22,22 +23,47 @@ func GenerateAesKey(password string, salt []byte) []byte {
 	return argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
 }
 
-func AesEncryptBytes(toEncrypt []byte, key []byte) []byte {
+func AesEncryptBytes(plainText []byte, key []byte) []byte {
 	aesCipher, err := aes.NewCipher(key)
 	if err != nil {
-		log.Fatalln("Failed to create new AES cipher, err:", err)
+		log.Fatalln("(AesEncryptBytes): Failed to create new AES cipher, err:", err)
 	}
 
 	gcm, err := cipher.NewGCM(aesCipher)
 	if err != nil {
-		log.Fatalln("Failed to create new gcm, err:", err)
+		log.Fatalln("(AesEncryptBytes): Failed to create new gcm, err:", err)
 	}
 
 	nonce := make([]byte, gcm.NonceSize())
 	_, err = rand.Read(nonce)
 	if err != nil {
-		log.Fatalln("Failed to put random values in to nonce ???, err:", err)
+		log.Fatalln("(AesEncryptBytes): Failed to put random values in to nonce ???, err:", err)
 	}
 
-	return gcm.Seal(nonce, nonce, toEncrypt, nil)
+	return gcm.Seal(nonce, nonce, plainText, nil)
+}
+
+func AesDecryptBytes(cipherText []byte, key []byte) []byte {
+	aesCipher, err := aes.NewCipher(key)
+	if err != nil {
+		log.Fatalln("(AesDecryptBytes): Failed to create new AES cipher, err:", err)
+	}
+
+	gcm, err := cipher.NewGCM(aesCipher)
+	if err != nil {
+		log.Fatalln("(AesDecryptBytes): Failed to create new gcm, err:", err)
+	}
+
+	nonceSize := gcm.NonceSize()
+	if len(cipherText) < nonceSize {
+		fmt.Println(err)
+	}
+
+	nonce, cipherText := cipherText[:nonceSize], cipherText[nonceSize:]
+	plaintext, err := gcm.Open(nil, nonce, cipherText, nil)
+	if err != nil {
+		log.Fatalln("(AesDecryptBytes): Failed to decrypt cipherText, err:", err)
+	}
+
+	return plaintext
 }

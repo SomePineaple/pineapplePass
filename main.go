@@ -21,6 +21,6 @@ func main() {
 	application.Connect("activate", func() { ui.OnActivate(application) })
 	// Run Gtk application
 	exitCode := application.Run(os.Args)
-	manager.Current.SaveDatabase()
+	manager.SaveDatabase()
 	os.Exit(exitCode)
 }

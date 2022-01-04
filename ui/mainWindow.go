@@ -10,20 +10,21 @@ import (
 
 func showMainWindow() {
 	loginWindow.Hide()
-	pwConfirmDialog.Hide()
+
+	if pwConfirmDialog != nil {
+		pwConfirmDialog.Hide()
+	}
 
 	window := utils.GetWindow(builder, "MainWindow")
 
 	foldersListBox := utils.GetListBox(builder, "FoldersListBox")
 	foldersListBox.SetActivateOnSingleClick(true)
 	foldersListBox.Connect("row-selected", func() {
-
+		// TODO: Make selecting a folder a reality
 	})
-	mainFolder, err := gtk.LabelNew("MasterFolder")
-	if err != nil {
-		log.Fatalln("Failed to create label for main folder, err:", err)
-	}
-	foldersListBox.Prepend(mainFolder)
+
+	updateFolders()
+	updatePasswords()
 
 	setupMainWindowButtons()
 

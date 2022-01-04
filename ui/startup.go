@@ -41,7 +41,7 @@ func OnActivate(application *gtk.Application) {
 
 	application.AddWindow(loginWindow)
 
-	utils.ConnectButton(builder, "LoginButton", "pressed", func() {
+	utils.ConnectButton(builder, "LoginButton", "clicked", func() {
 		if _, err := os.Stat("./defaultSafe.ppass"); errors.Is(err, os.ErrNotExist) {
 			showPasswordConfirmDialogue()
 		} else {
@@ -54,6 +54,7 @@ func OnActivate(application *gtk.Application) {
 
 			manager.Current = manager.NewDatabase()
 			manager.OpenDatabase("./defaultSafe.ppass", password)
+			showMainWindow()
 		}
 	})
 
