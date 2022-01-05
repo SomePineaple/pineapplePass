@@ -585,6 +585,7 @@ Notes:</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="visibility">False</property>
+                    <property name="input-purpose">password</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -603,7 +604,7 @@ Notes:</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="NewPasswordNotesEntry">
+                  <object class="GtkTextView" id="NewPasswordNotesTextView">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>

@@ -15,13 +15,17 @@ func setupNewPasswordDialog() {
 		name, _ := utils.GetEntry(builder, "NewPasswordNameEntry").GetText()
 		email, _ := utils.GetEntry(builder, "NewPasswordEmailEntry").GetText()
 		password, _ := utils.GetEntry(builder, "NewPasswordPasswordEntry").GetText()
-		notes, _ := utils.GetEntry(builder, "NewPasswordNotesEntry").GetText()
+		notesTextBuffer, _ := utils.GetTextView(builder, "NewPasswordNotesTextView").GetBuffer()
+
+		start, end := notesTextBuffer.GetBounds()
+
+		notesText, _ := notesTextBuffer.GetText(start, end, false)
 
 		newPassword := manager.Password{
 			Name:     name,
 			Email:    email,
 			Password: password,
-			Notes:    notes,
+			Notes:    notesText,
 		}
 
 		manager.AddPassword(newPassword)

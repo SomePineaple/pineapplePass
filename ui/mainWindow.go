@@ -30,6 +30,10 @@ func showMainWindow() {
 		updatePasswords()
 	})
 
+	utils.GetListBox(builder, "PasswordsListBox").Connect("row-selected", func() {
+		updatePasswordInformationLabel()
+	})
+
 	updateFolders()
 	updatePasswords()
 
@@ -68,7 +72,35 @@ func setupMainWindowButtons() {
 		newPasswordDialog.Show()
 	})
 
+	utils.ConnectCheckButton(builder, "MainWindowShowPassword", "clicked", func() {
+		updatePasswordInformationLabel()
+	})
+
 	setupNewPasswordDialog()
+}
+
+func updatePasswordInformationLabel() {
+	currentPasswordIdx := utils.GetListBox(builder, "PasswordsListBox").GetSelectedRow().GetIndex()
+	if currentPasswordIdx == -1 {
+		return
+	}
+
+	currentPassword := manager.GetFolder().ContainedPasswords[currentPasswordIdx]
+
+	var passwordText string
+	var notesText string
+
+	if utils.GetCheckButton(builder, "MainWindowShowPassword").GetActive() {
+		passwordText = currentPassword.Password
+		notesText = currentPassword.Notes
+	} else {
+		passwordText = "*******"
+		notesText = "*******"
+	}
+
+	utils.GetLabel(builder, "PasswordInformationLabel").SetText(
+		"Name: " + currentPassword.Name + "\n" + "Email: " + currentPassword.Email + "\n" + "Password: " + passwordText + "\n" + "Notes:\n" + notesText,
+	)
 }
 
 func updateFolders() {

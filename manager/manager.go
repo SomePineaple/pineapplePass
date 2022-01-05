@@ -100,6 +100,17 @@ func SaveDatabase() {
 	}
 }
 
+func GetFolder() Folder {
+	if Current.CurrentFolder == -1 {
+		return Folder{
+			Name:               "MasterFolder",
+			ContainedPasswords: Current.MasterFolder.ContainedPasswords,
+		}
+	} else {
+		return Current.MasterFolder.ContainedFolders[Current.CurrentFolder]
+	}
+}
+
 func AddFolder(folderName string) {
 	Current.MasterFolder.ContainedFolders = append(Current.MasterFolder.ContainedFolders, NewFolder(folderName))
 }

@@ -5,6 +5,22 @@ import (
 	"log"
 )
 
+func GetTextView(builder *gtk.Builder, objID string) *gtk.TextView {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetTextView): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	textView, ok := obj.(*gtk.TextView)
+	if !ok {
+		log.Println("(GetTextView): Object with id", objID, "is not of type *gtk.ListBox")
+		return nil
+	}
+
+	return textView
+}
+
 func GetListBox(builder *gtk.Builder, objID string) *gtk.ListBox {
 	obj, err := builder.GetObject(objID)
 	if err != nil {
