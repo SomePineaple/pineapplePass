@@ -61,3 +61,45 @@ func setupNewFolderDialog() {
 		manager.SaveDatabase()
 	})
 }
+
+func setupEditPasswordDialog() {
+	if selectedPassword == nil {
+		return
+	}
+
+	gtkUtils.GetEntry(builder, "EditPasswordNameEntry").SetText(selectedPassword.Name)
+	gtkUtils.GetEntry(builder, "EditPasswordEmailEntry").SetText(selectedPassword.Email)
+	gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry").SetText(selectedPassword.Password)
+
+	notesTextBuffer, err := gtkUtils.GetTextView(builder, "NewPasswordNotesTextView").GetBuffer()
+	if err != nil {
+		log.Fatalln("(setupEditPasswordDialog): Failed to get notesTextBuffer, err:", err)
+	}
+
+	notesTextBuffer.SetText(selectedPassword.Notes)
+
+	editPasswordDialog := gtkUtils.GetDialog(builder, "EditPasswordDialog")
+
+	gtkUtils.ConnectButton(builder, "EditPasswordCancel", "clicked", editPasswordDialog.Hide)
+	gtkUtils.ConnectButton(builder, "EditPasswordSave", "clicked", func() {
+		selectedPassword.Name, _ = gtkUtils.GetEntry(builder, "EditPasswordNameEntry").GetText()
+		selectedPassword.Email, _ = gtkUtils.GetEntry(builder, "EditPasswordEmailEntry").GetText()
+		selectedPassword.Password, _ = gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry").GetText()
+
+		notesTextBuffer, _ = gtkUtils.GetTextView(builder, "EditPasswordNotesTextView").GetBuffer()
+		start, end := notesTextBuffer.GetBounds()
+		notesText, _ := notesTextBuffer.GetText(start, end, false)
+
+		selectedPassword.Notes = notesText
+		editPasswordDialog.Hide()
+
+		updatePasswordInformationLabel()
+	})
+
+	gtkUtils.ConnectCheckButton(builder, "EditPasswordShowPasswordCheckButton", "clicked", func() {
+		gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry").SetVisibility(gtkUtils.GetCheckButton(builder, "EditPasswordShowPasswordCheckButton").GetActive())
+	})
+
+	editPasswordDialog.ShowAll()
+	editPasswordDialog.Show()
+}

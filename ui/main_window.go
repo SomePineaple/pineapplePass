@@ -9,7 +9,7 @@ import (
 	"pineapplePass/utils/gtkUtils"
 )
 
-var selectedPassword manager.Password
+var selectedPassword *manager.Password
 
 func showMainWindow() {
 	loginWindow.Hide()
@@ -33,9 +33,7 @@ func showMainWindow() {
 		updatePasswords()
 	})
 
-	gtkUtils.GetListBox(builder, "PasswordsListBox").Connect("row-selected", func() {
-		updatePasswordInformationLabel()
-	})
+	gtkUtils.GetListBox(builder, "PasswordsListBox").Connect("row-selected", updatePasswordInformationLabel)
 
 	updateFolders()
 	updatePasswords()
@@ -75,9 +73,9 @@ func setupMainWindowButtons() {
 		newPasswordDialog.Show()
 	})
 
-	gtkUtils.ConnectCheckButton(builder, "MainWindowShowPassword", "clicked", func() {
-		updatePasswordInformationLabel()
-	})
+	gtkUtils.ConnectButton(builder, "EditEntryButton", "clicked", setupEditPasswordDialog)
+
+	gtkUtils.ConnectCheckButton(builder, "MainWindowShowPassword", "clicked", updatePasswordInformationLabel)
 
 	gtkUtils.ConnectButton(builder, "CopyEmailButton", "clicked", func() {
 		utils.SetClipboardText(selectedPassword.Email)
@@ -96,7 +94,7 @@ func updatePasswordInformationLabel() {
 		return
 	}
 
-	selectedPassword = manager.GetFolder().ContainedPasswords[selectedPasswordIdx]
+	selectedPassword = &manager.GetFolder().ContainedPasswords[selectedPasswordIdx]
 
 	var passwordText string
 	var notesText string
