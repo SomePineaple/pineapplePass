@@ -68,6 +68,9 @@ func setupMainWindowButtons() {
 			gtkUtils.GetEntry(builder, entry).SetText("")
 		}
 
+		notesTextBuffer, _ := gtkUtils.GetTextView(builder, "NewPasswordNotesTextView").GetBuffer()
+		notesTextBuffer.SetText("")
+
 		newPasswordDialog.SetTitle("Create New Password")
 		newPasswordDialog.ShowAll()
 		newPasswordDialog.Show()
