@@ -20,9 +20,9 @@ func OnActivate(application *gtk.Application) {
 		log.Fatal("Failed to create a new builder object:", err)
 	}
 
-	err = builder.AddFromFile("./pineapple_pass.glade")
+	err = builder.AddFromFile("./pineapple_pass.xml")
 	if err != nil {
-		log.Fatal("Failed to load ./pineapple_pass.glade:", err)
+		log.Fatal("Failed to load ./pineapple_pass.xml:", err)
 	}
 
 	gtkUtils.ConnectCheckButton(builder, "ShowPwCheckBox", "toggled", func() {
