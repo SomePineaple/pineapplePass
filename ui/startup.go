@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"pineapplePass/manager"
-	"pineapplePass/utils"
+	"pineapplePass/utils/gtkUtils"
 )
 
 var builder *gtk.Builder
@@ -25,27 +25,27 @@ func OnActivate(application *gtk.Application) {
 		log.Fatal("Failed to load ./pineapplePass.glade:", err)
 	}
 
-	utils.ConnectCheckButton(builder, "ShowPwCheckBox", "toggled", func() {
-		entryBox := utils.GetEntry(builder, "PasswordEntry")
+	gtkUtils.ConnectCheckButton(builder, "ShowPwCheckBox", "toggled", func() {
+		entryBox := gtkUtils.GetEntry(builder, "PasswordEntry")
 		if entryBox != nil {
 			entryBox.SetVisibility(!entryBox.GetVisibility())
 		}
 
-		pwConfirmEntry := utils.GetEntry(builder, "PasswordConfirmEntry")
+		pwConfirmEntry := gtkUtils.GetEntry(builder, "PasswordConfirmEntry")
 		if pwConfirmEntry != nil {
 			pwConfirmEntry.SetVisibility(!pwConfirmEntry.GetVisibility())
 		}
 	})
 
-	loginWindow = utils.GetWindow(builder, "LoginWindow")
+	loginWindow = gtkUtils.GetWindow(builder, "LoginWindow")
 
 	application.AddWindow(loginWindow)
 
-	utils.ConnectButton(builder, "LoginButton", "clicked", func() {
+	gtkUtils.ConnectButton(builder, "LoginButton", "clicked", func() {
 		if _, err := os.Stat("./defaultSafe.ppass"); errors.Is(err, os.ErrNotExist) {
 			showPasswordConfirmDialogue()
 		} else {
-			passwordEntry := utils.GetEntry(builder, "PasswordEntry")
+			passwordEntry := gtkUtils.GetEntry(builder, "PasswordEntry")
 
 			password, err := passwordEntry.GetText()
 			if err != nil {
@@ -65,16 +65,16 @@ func OnActivate(application *gtk.Application) {
 }
 
 func showPasswordConfirmDialogue() {
-	pwConfirmDialog = utils.GetDialog(builder, "PasswordConfirmDialogue")
+	pwConfirmDialog = gtkUtils.GetDialog(builder, "PasswordConfirmDialogue")
 	pwConfirmDialog.SetTitle("Please Confirm Your Password")
 
-	utils.ConnectButton(builder, "PasswordConfirmCancel", "clicked", func() {
+	gtkUtils.ConnectButton(builder, "PasswordConfirmCancel", "clicked", func() {
 		pwConfirmDialog.Hide()
 	})
 
-	utils.ConnectButton(builder, "PasswordConfirmOK", "clicked", func() {
-		originalPwEntry := utils.GetEntry(builder, "PasswordEntry")
-		pwConfirmEntry := utils.GetEntry(builder, "PasswordConfirmEntry")
+	gtkUtils.ConnectButton(builder, "PasswordConfirmOK", "clicked", func() {
+		originalPwEntry := gtkUtils.GetEntry(builder, "PasswordEntry")
+		pwConfirmEntry := gtkUtils.GetEntry(builder, "PasswordConfirmEntry")
 
 		originalText, err := originalPwEntry.GetText()
 		if err != nil {
@@ -87,7 +87,7 @@ func showPasswordConfirmDialogue() {
 		}
 
 		if originalText != confirmText {
-			failedLabel := utils.GetLabel(builder, "PwFailedLabel")
+			failedLabel := gtkUtils.GetLabel(builder, "PwFailedLabel")
 			failedLabel.SetText("Passwords do not match")
 		} else {
 			manager.Current = manager.NewDatabase()

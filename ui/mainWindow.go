@@ -6,7 +6,10 @@ import (
 	"os"
 	"pineapplePass/manager"
 	"pineapplePass/utils"
+	"pineapplePass/utils/gtkUtils"
 )
+
+var selectedPassword manager.Password
 
 func showMainWindow() {
 	loginWindow.Hide()
@@ -15,9 +18,9 @@ func showMainWindow() {
 		pwConfirmDialog.Hide()
 	}
 
-	window := utils.GetWindow(builder, "MainWindow")
+	window := gtkUtils.GetWindow(builder, "MainWindow")
 
-	foldersListBox := utils.GetListBox(builder, "FoldersListBox")
+	foldersListBox := gtkUtils.GetListBox(builder, "FoldersListBox")
 	foldersListBox.SetActivateOnSingleClick(true)
 	foldersListBox.Connect("row-selected", func() {
 		selectedRowIndex := foldersListBox.GetSelectedRow().GetIndex()
@@ -30,7 +33,7 @@ func showMainWindow() {
 		updatePasswords()
 	})
 
-	utils.GetListBox(builder, "PasswordsListBox").Connect("row-selected", func() {
+	gtkUtils.GetListBox(builder, "PasswordsListBox").Connect("row-selected", func() {
 		updatePasswordInformationLabel()
 	})
 
@@ -51,9 +54,9 @@ func showMainWindow() {
 }
 
 func setupMainWindowButtons() {
-	utils.ConnectButton(builder, "NewFolderButton", "clicked", func() {
-		newFolderDialog := utils.GetDialog(builder, "NewFolderDialog")
-		utils.GetEntry(builder, "NewFolderNameEntry").SetText("")
+	gtkUtils.ConnectButton(builder, "NewFolderButton", "clicked", func() {
+		newFolderDialog := gtkUtils.GetDialog(builder, "NewFolderDialog")
+		gtkUtils.GetEntry(builder, "NewFolderNameEntry").SetText("")
 		newFolderDialog.SetTitle("Create New Folder")
 		newFolderDialog.ShowAll()
 		newFolderDialog.Show()
@@ -61,10 +64,10 @@ func setupMainWindowButtons() {
 
 	setupNewFolderDialog()
 
-	utils.ConnectButton(builder, "NewPasswordButton", "clicked", func() {
-		newPasswordDialog := utils.GetDialog(builder, "NewPasswordDialog")
+	gtkUtils.ConnectButton(builder, "NewPasswordButton", "clicked", func() {
+		newPasswordDialog := gtkUtils.GetDialog(builder, "NewPasswordDialog")
 		for _, entry := range []string{"NewPasswordNameEntry", "NewPasswordEmailEntry", "NewPasswordPasswordEntry", "NewPasswordNotesEntry"} {
-			utils.GetEntry(builder, entry).SetText("")
+			gtkUtils.GetEntry(builder, entry).SetText("")
 		}
 
 		newPasswordDialog.SetTitle("Create New Password")
@@ -72,39 +75,47 @@ func setupMainWindowButtons() {
 		newPasswordDialog.Show()
 	})
 
-	utils.ConnectCheckButton(builder, "MainWindowShowPassword", "clicked", func() {
+	gtkUtils.ConnectCheckButton(builder, "MainWindowShowPassword", "clicked", func() {
 		updatePasswordInformationLabel()
+	})
+
+	gtkUtils.ConnectButton(builder, "CopyEmailButton", "clicked", func() {
+		utils.SetClipboardText(selectedPassword.Email)
+	})
+
+	gtkUtils.ConnectButton(builder, "CopyPasswordButton", "clicked", func() {
+		utils.SetClipboardText(selectedPassword.Password)
 	})
 
 	setupNewPasswordDialog()
 }
 
 func updatePasswordInformationLabel() {
-	currentPasswordIdx := utils.GetListBox(builder, "PasswordsListBox").GetSelectedRow().GetIndex()
-	if currentPasswordIdx == -1 {
+	selectedPasswordIdx := gtkUtils.GetListBox(builder, "PasswordsListBox").GetSelectedRow().GetIndex()
+	if selectedPasswordIdx == -1 {
 		return
 	}
 
-	currentPassword := manager.GetFolder().ContainedPasswords[currentPasswordIdx]
+	selectedPassword = manager.GetFolder().ContainedPasswords[selectedPasswordIdx]
 
 	var passwordText string
 	var notesText string
 
-	if utils.GetCheckButton(builder, "MainWindowShowPassword").GetActive() {
-		passwordText = currentPassword.Password
-		notesText = currentPassword.Notes
+	if gtkUtils.GetCheckButton(builder, "MainWindowShowPassword").GetActive() {
+		passwordText = selectedPassword.Password
+		notesText = selectedPassword.Notes
 	} else {
 		passwordText = "*******"
 		notesText = "*******"
 	}
 
-	utils.GetLabel(builder, "PasswordInformationLabel").SetText(
-		"Name: " + currentPassword.Name + "\n" + "Email: " + currentPassword.Email + "\n" + "Password: " + passwordText + "\n" + "Notes:\n" + notesText,
+	gtkUtils.GetLabel(builder, "PasswordInformationLabel").SetText(
+		"Name: " + selectedPassword.Name + "\n" + "Email: " + selectedPassword.Email + "\n" + "Password: " + passwordText + "\n" + "Notes:\n" + notesText,
 	)
 }
 
 func updateFolders() {
-	foldersListBox := utils.GetListBox(builder, "FoldersListBox")
+	foldersListBox := gtkUtils.GetListBox(builder, "FoldersListBox")
 	foldersListBox.GetChildren().Foreach(func(item interface{}) {
 		foldersListBox.Remove(item.(*gtk.Widget))
 	})
@@ -135,7 +146,7 @@ func updateFolders() {
 }
 
 func updatePasswords() {
-	passwordsListBox := utils.GetListBox(builder, "PasswordsListBox")
+	passwordsListBox := gtkUtils.GetListBox(builder, "PasswordsListBox")
 	passwordsListBox.GetChildren().Foreach(func(item interface{}) {
 		passwordsListBox.Remove(item.(*gtk.Widget))
 	})

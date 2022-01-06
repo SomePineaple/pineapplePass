@@ -3,19 +3,19 @@ package ui
 import (
 	"log"
 	"pineapplePass/manager"
-	"pineapplePass/utils"
+	"pineapplePass/utils/gtkUtils"
 )
 
 func setupNewPasswordDialog() {
-	utils.ConnectButton(builder, "NewPasswordCancel", "clicked", func() {
-		utils.GetDialog(builder, "NewPasswordDialog").Hide()
+	gtkUtils.ConnectButton(builder, "NewPasswordCancel", "clicked", func() {
+		gtkUtils.GetDialog(builder, "NewPasswordDialog").Hide()
 	})
 
-	utils.ConnectButton(builder, "NewPasswordOK", "clicked", func() {
-		name, _ := utils.GetEntry(builder, "NewPasswordNameEntry").GetText()
-		email, _ := utils.GetEntry(builder, "NewPasswordEmailEntry").GetText()
-		password, _ := utils.GetEntry(builder, "NewPasswordPasswordEntry").GetText()
-		notesTextBuffer, _ := utils.GetTextView(builder, "NewPasswordNotesTextView").GetBuffer()
+	gtkUtils.ConnectButton(builder, "NewPasswordOK", "clicked", func() {
+		name, _ := gtkUtils.GetEntry(builder, "NewPasswordNameEntry").GetText()
+		email, _ := gtkUtils.GetEntry(builder, "NewPasswordEmailEntry").GetText()
+		password, _ := gtkUtils.GetEntry(builder, "NewPasswordPasswordEntry").GetText()
+		notesTextBuffer, _ := gtkUtils.GetTextView(builder, "NewPasswordNotesTextView").GetBuffer()
 
 		start, end := notesTextBuffer.GetBounds()
 
@@ -33,24 +33,24 @@ func setupNewPasswordDialog() {
 
 		updatePasswords()
 
-		utils.GetDialog(builder, "NewPasswordDialog").Hide()
+		gtkUtils.GetDialog(builder, "NewPasswordDialog").Hide()
 	})
 
-	utils.ConnectCheckButton(builder, "NewPasswordShowPasswordCheckButton", "toggled", func() {
-		label := utils.GetEntry(builder, "NewPasswordPasswordEntry")
+	gtkUtils.ConnectCheckButton(builder, "NewPasswordShowPasswordCheckButton", "toggled", func() {
+		label := gtkUtils.GetEntry(builder, "NewPasswordPasswordEntry")
 		label.SetVisibility(!label.GetVisibility())
 	})
 }
 
 func setupNewFolderDialog() {
-	utils.ConnectButton(builder, "NewFolderCancel", "clicked", func() {
-		newFolderDialog := utils.GetDialog(builder, "NewFolderDialog")
+	gtkUtils.ConnectButton(builder, "NewFolderCancel", "clicked", func() {
+		newFolderDialog := gtkUtils.GetDialog(builder, "NewFolderDialog")
 		newFolderDialog.Hide()
 	})
 
-	utils.ConnectButton(builder, "NewFolderOK", "clicked", func() {
-		utils.GetDialog(builder, "NewFolderDialog").Hide()
-		newFolderName, err := utils.GetEntry(builder, "NewFolderNameEntry").GetText()
+	gtkUtils.ConnectButton(builder, "NewFolderOK", "clicked", func() {
+		gtkUtils.GetDialog(builder, "NewFolderDialog").Hide()
+		newFolderName, err := gtkUtils.GetEntry(builder, "NewFolderNameEntry").GetText()
 		if err != nil {
 			log.Fatalln("Failed to get name for folder from NewFolderNameEntry entryBox, err:", err)
 		}
