@@ -13,7 +13,7 @@ func main() {
 	const appID = "dev.somepineaple.pineapplepass"
 	application, err := gtk.ApplicationNew(appID, glib.APPLICATION_FLAGS_NONE)
 	if err != nil {
-		log.Fatal("Could not create application.", err)
+		log.Fatalln("Could not create application.", err)
 	}
 
 	application.Connect("activate", func() { ui.OnActivate(application) })
