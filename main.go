@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/somepineaple/pineapplePass/manager"
+	"github.com/somepineaple/pineapplePass/ui"
 	"log"
 	"os"
-	"pineapplePass/manager"
-	"pineapplePass/ui"
 )
 
 func main() {

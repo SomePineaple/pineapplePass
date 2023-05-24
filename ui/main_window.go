@@ -2,11 +2,11 @@ package ui
 
 import (
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/somepineaple/pineapplePass/manager"
+	"github.com/somepineaple/pineapplePass/utils"
+	"github.com/somepineaple/pineapplePass/utils/gtkUtils"
 	"log"
 	"os"
-	"pineapplePass/manager"
-	"pineapplePass/utils"
-	"pineapplePass/utils/gtkUtils"
 )
 
 var selectedPassword *manager.Password
@@ -86,6 +86,19 @@ func setupMainWindowButtons() {
 
 	gtkUtils.ConnectButton(builder, "CopyPasswordButton", "clicked", func() {
 		utils.SetClipboardText(selectedPassword.Password)
+	})
+
+	gtkUtils.ConnectMenuItem(builder, "MenuBarExit", "activate", func() {
+		manager.SaveDatabase()
+		os.Exit(0)
+	})
+
+	gtkUtils.ConnectMenuItem(builder, "MenuBarOpen", "activate", func() {
+		manager.SaveDatabase()
+		openedDatabase := gtkUtils.OpenFileDialogue("Open Database")
+		setupOpenSafePasswordDialogue(openedDatabase)
+		gtkUtils.GetDialog(builder, "OpenSafePasswordDialogue").Show()
+
 	})
 
 	setupNewPasswordDialog()

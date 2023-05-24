@@ -132,3 +132,19 @@ func GetDialog(builder *gtk.Builder, objID string) *gtk.Dialog {
 
 	return dialog
 }
+
+func GetMenuItem(builder *gtk.Builder, objID string) *gtk.MenuItem {
+	obj, err := builder.GetObject(objID)
+	if err != nil {
+		log.Println("(GetMenuItem): Failed to get object with id", objID, "err:", err)
+		return nil
+	}
+
+	menuItem, ok := obj.(*gtk.MenuItem)
+	if !ok {
+		log.Println("(GetMenuItem): Object with id", objID, "is not of type *gtk.MenuItem")
+		return nil
+	}
+
+	return menuItem
+}

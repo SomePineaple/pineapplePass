@@ -17,3 +17,10 @@ func ConnectCheckButton(builder *gtk.Builder, objID string, detailedSignal strin
 		checkButton.Connect(detailedSignal, f)
 	}
 }
+
+func ConnectMenuItem(builder *gtk.Builder, objID string, detailedSignal string, f interface{}) {
+	menuItem := GetMenuItem(builder, objID)
+	if menuItem != nil {
+		menuItem.Connect(detailedSignal, f)
+	}
+}

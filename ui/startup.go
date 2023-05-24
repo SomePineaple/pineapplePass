@@ -3,10 +3,10 @@ package ui
 import (
 	"errors"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/somepineaple/pineapplePass/manager"
+	"github.com/somepineaple/pineapplePass/utils/gtkUtils"
 	"log"
 	"os"
-	"pineapplePass/manager"
-	"pineapplePass/utils/gtkUtils"
 )
 
 var builder *gtk.Builder

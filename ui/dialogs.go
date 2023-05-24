@@ -1,9 +1,9 @@
 package ui
 
 import (
+	"github.com/somepineaple/pineapplePass/manager"
+	"github.com/somepineaple/pineapplePass/utils/gtkUtils"
 	"log"
-	"pineapplePass/manager"
-	"pineapplePass/utils/gtkUtils"
 )
 
 func setupNewPasswordDialog() {
@@ -59,6 +59,27 @@ func setupNewFolderDialog() {
 		updateFolders()
 
 		manager.SaveDatabase()
+	})
+}
+
+func setupOpenSafePasswordDialogue(toOpenPath string) {
+	openSafePasswordDialogue := gtkUtils.GetDialog(builder, "OpenSafePasswordDialogue")
+	openSafePasswordDialogue.SetTitle("Open Safe")
+	passwordEntry := gtkUtils.GetEntry(builder, "OpenSafePasswordEntry")
+	gtkUtils.ConnectButton(builder, "OpenSafeCancel", "clicked", func() {
+		passwordEntry.SetText("")
+		openSafePasswordDialogue.Hide()
+	})
+	gtkUtils.ConnectButton(builder, "OpenSafeOK", "clicked", func() {
+		passwordText, err := passwordEntry.GetText()
+		if err != nil {
+			log.Println("(setupOpenSafePasswordDialogue): Failed to get password text")
+			return
+		}
+		manager.OpenDatabase(toOpenPath, passwordText)
+		openSafePasswordDialogue.Hide()
+		updateFolders()
+		updatePasswords()
 	})
 }
 

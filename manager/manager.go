@@ -4,10 +4,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"github.com/somepineaple/pineapplePass/utils"
 	"log"
 	"os"
-	"pineapplePass/utils"
 )
 
 var Current Database
@@ -16,7 +15,7 @@ func OpenDatabase(databasePath string, masterPassword string) {
 	Current.DatabasePath = databasePath
 	Current.masterPassword = masterPassword
 
-	fileBytes, err := ioutil.ReadFile(Current.DatabasePath)
+	fileBytes, err := os.ReadFile(Current.DatabasePath)
 	if err != nil {
 		log.Fatalln("(OpenDatabase): Failed to get bytes from databaseFile, err:", err)
 	}
@@ -58,10 +57,14 @@ func SaveDatabase() {
 		return
 	}
 
+	ExportDatabase(Current.DatabasePath)
+}
+
+func ExportDatabase(savePath string) {
 	aesKey := utils.GenerateAesKey(Current.masterPassword, Current.masterPasswordSalt)
 	bytesToEncrypt, err := json.Marshal(Current.MasterFolder)
 	if err != nil {
-		log.Fatalln("(SaveDatabase): Failed to marshal master folder:", err)
+		log.Fatalln("(ExportDatabase): Failed to marshal master folder:", err)
 	}
 
 	encryptedBytes := utils.AesEncryptBytes(bytesToEncrypt, aesKey)
@@ -73,30 +76,30 @@ func SaveDatabase() {
 
 	dbFileBytes, err := json.Marshal(dbFile)
 	if err != nil {
-		log.Fatalln("(SaveDatabase): Failed to marshal dbFile, err:", err)
+		log.Fatalln("(ExportDatabase): Failed to marshal dbFile, err:", err)
 	}
 
 	var outputFile *os.File
-	if _, err = os.Stat(Current.DatabasePath); errors.Is(err, os.ErrNotExist) {
-		outputFile, err = os.Create(Current.DatabasePath)
+	if _, err = os.Stat(savePath); errors.Is(err, os.ErrNotExist) {
+		outputFile, err = os.Create(savePath)
 		if err != nil {
-			log.Fatalln("(SaveDatabase): Failed to create output file:", err)
+			log.Fatalln("(ExportDatabase): Failed to create output file:", err)
 		}
 	} else {
-		outputFile, err = os.OpenFile(Current.DatabasePath, os.O_WRONLY, os.ModePerm)
+		outputFile, err = os.OpenFile(savePath, os.O_WRONLY, os.ModePerm)
 		if err != nil {
-			log.Fatalln("(SaveDatabase): Failed to open output file:", err)
+			log.Fatalln("(ExportDatabase): Failed to open output file:", err)
 		}
 	}
 
 	_, err = outputFile.Write(dbFileBytes)
 	if err != nil {
-		log.Fatalln("(SaveDatabase): Failed to write database to file:", err)
+		log.Fatalln("(ExportDatabase): Failed to write database to file:", err)
 	}
 
 	err = outputFile.Close()
 	if err != nil {
-		log.Fatalln("(SaveDatabase): Failed to close database file:", err)
+		log.Fatalln("(ExportDatabase): Failed to close database file:", err)
 	}
 }
 
