@@ -96,9 +96,18 @@ func setupMainWindowButtons() {
 	gtkUtils.ConnectMenuItem(builder, "MenuBarOpen", "activate", func() {
 		manager.SaveDatabase()
 		openedDatabase := gtkUtils.OpenFileDialogue("Open Database")
-		setupOpenSafePasswordDialogue(openedDatabase)
-		gtkUtils.GetDialog(builder, "OpenSafePasswordDialogue").Show()
+		if openedDatabase != "" {
+			setupOpenSafePasswordDialogue(openedDatabase)
+			gtkUtils.GetDialog(builder, "OpenSafePasswordDialogue").Show()
+		}
+	})
 
+	gtkUtils.ConnectMenuItem(builder, "MenuBarExport", "activate", func() {
+		manager.SaveDatabase()
+		exportPath := gtkUtils.SaveFileDialogue("Export Database")
+		if exportPath != "" {
+			manager.ExportDatabase(exportPath)
+		}
 	})
 
 	setupNewPasswordDialog()
