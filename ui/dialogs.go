@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/mazen160/go-random"
 	"github.com/somepineaple/pineapplePass/manager"
 	"github.com/somepineaple/pineapplePass/utils/gtkUtils"
 	"log"
@@ -39,6 +40,16 @@ func setupNewPasswordDialog() {
 	gtkUtils.ConnectCheckButton(builder, "NewPasswordShowPasswordCheckButton", "toggled", func() {
 		label := gtkUtils.GetEntry(builder, "NewPasswordPasswordEntry")
 		label.SetVisibility(!label.GetVisibility())
+	})
+
+	gtkUtils.ConnectButton(builder, "NewPasswordGenerateButton", "clicked", func() {
+		randString, err := random.Random(25, random.Printables, true)
+		if err != nil {
+			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string ", err)
+			return
+		}
+		passwordEntry := gtkUtils.GetEntry(builder, "NewPasswordPasswordEntry")
+		passwordEntry.SetText(randString)
 	})
 }
 
@@ -119,6 +130,16 @@ func setupEditPasswordDialog() {
 
 	gtkUtils.ConnectCheckButton(builder, "EditPasswordShowPasswordCheckButton", "clicked", func() {
 		gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry").SetVisibility(gtkUtils.GetCheckButton(builder, "EditPasswordShowPasswordCheckButton").GetActive())
+	})
+
+	gtkUtils.ConnectButton(builder, "EditPasswordGenerateButton", "clicked", func() {
+		randString, err := random.Random(25, random.Printables, true)
+		if err != nil {
+			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string ", err)
+			return
+		}
+		passwordEntry := gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry")
+		passwordEntry.SetText(randString)
 	})
 
 	editPasswordDialog.ShowAll()
