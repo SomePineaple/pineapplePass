@@ -45,7 +45,7 @@ func setupNewPasswordDialog() {
 	gtkUtils.ConnectButton(builder, "NewPasswordGenerateButton", "clicked", func() {
 		randString, err := random.Random(25, random.Printables, true)
 		if err != nil {
-			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string ", err)
+			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string err:", err)
 			return
 		}
 		passwordEntry := gtkUtils.GetEntry(builder, "NewPasswordPasswordEntry")
@@ -135,7 +135,7 @@ func setupEditPasswordDialog() {
 	gtkUtils.ConnectButton(builder, "EditPasswordGenerateButton", "clicked", func() {
 		randString, err := random.Random(25, random.Printables, true)
 		if err != nil {
-			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string ", err)
+			log.Println("(gtkUtils.ConnectButton: NewPasswordGenerateButton): Failed to generate random string err:", err)
 			return
 		}
 		passwordEntry := gtkUtils.GetEntry(builder, "EditPasswordPasswordEntry")

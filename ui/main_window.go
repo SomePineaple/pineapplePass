@@ -41,7 +41,7 @@ func showMainWindow() {
 	setupMainWindowButtons()
 
 	window.SetTitle("Pineapple Pass")
-	window.SetDefaultSize(800, 800)
+	window.SetDefaultSize(800, 400)
 	window.Connect("destroy", func() {
 		manager.SaveDatabase()
 		os.Exit(0)
@@ -133,7 +133,7 @@ func updatePasswordInformationLabel() {
 	}
 
 	gtkUtils.GetLabel(builder, "PasswordInformationLabel").SetText(
-		"Name: " + selectedPassword.Name + "\n" + "Email: " + selectedPassword.Email + "\n" + "Password: " + passwordText + "\n" + "Notes:\n" + notesText,
+		"Name: " + selectedPassword.Name + "\n" + "Email: " + selectedPassword.Email + "\n" + "Password: " + passwordText + "\n" + "Notes: " + notesText + "\n",
 	)
 }
 
